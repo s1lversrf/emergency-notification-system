@@ -17,7 +17,12 @@ public class RecipientService {
         recipientRepository.save(recipient);
         return recipient.getId();
     }
+
     public Recipient getRecipientById(String id) {
         return recipientRepository.findById(id).orElse(null);
+    }
+
+    public void deleteAllRecipients() {
+        recipientRepository.deleteAll();
     }
 }

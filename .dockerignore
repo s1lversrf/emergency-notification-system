@@ -1,0 +1,29 @@
+# Secrets
+.env
+*.env
+*.secret
+*.key
+*.pem
+*.crt
+
+# Logs
+*.log
+logs/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Java build artifacts
+target/
+build/
+out/
+
+# Git
+.git/
+.gitignore
