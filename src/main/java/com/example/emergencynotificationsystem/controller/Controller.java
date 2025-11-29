@@ -1,8 +1,7 @@
 package com.example.emergencynotificationsystem.controller;
 
-import com.example.emergencynotificationsystem.dto.Recipient;
-import com.example.emergencynotificationsystem.dto.RecipientCreateRequest;
-import com.example.emergencynotificationsystem.dto.RecipientResponse;
+import com.example.emergencynotificationsystem.dto.*;
+import com.example.emergencynotificationsystem.repository.UploadJobRepository;
 import com.example.emergencynotificationsystem.service.FileParsingService;
 import com.example.emergencynotificationsystem.service.RecipientService;
 import com.example.emergencynotificationsystem.service.S3Service;
@@ -17,8 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(value = "/emergency-notification-system")
 public class Controller {
     private final RecipientService recipientService;
-    private final S3Service s3Service;
     private final FileParsingService fileParsingService;
+    private final S3Service s3Service;
+
+    private final UploadJobRepository uploadJobRepository;
 
     @PostMapping
     public ResponseEntity<String> addRecipient(@RequestBody RecipientCreateRequest request) {
@@ -29,10 +30,17 @@ public class Controller {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<Void> uploadFile (@RequestParam MultipartFile file) {
+    public ResponseEntity<Void> uploadFile (@RequestParam("file") MultipartFile file) {
+        UploadJob uploadJob = new UploadJob(UploadJobStatus.CREATED);
+        uploadJobRepository.save(uploadJob);
+
         String s3Key = s3Service.uploadFile(file);
 
-        fileParsingService.parseExcelFromS3Async(s3Key);
+        uploadJob.setS3Key(s3Key);
+        uploadJob.setStatus(UploadJobStatus.UPLOADED);
+        uploadJobRepository.save(uploadJob);
+
+        fileParsingService.parseExcelFromS3Async(uploadJob);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

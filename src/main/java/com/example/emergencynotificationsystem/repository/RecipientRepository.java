@@ -5,5 +5,4 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RecipientRepository extends CrudRepository<Recipient, String> {
-}
+public interface RecipientRepository extends CrudRepository<Recipient, String> {}
