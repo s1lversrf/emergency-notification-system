@@ -1,4 +1,5 @@
 .env
+recipient-service/.env.recipient
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

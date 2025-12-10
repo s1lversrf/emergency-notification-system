@@ -1,7 +1,9 @@
 services:
-  database:
+  recipient-database:
     image: postgres:latest
     container_name: postgres
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: ${DB_USERNAME}
@@ -12,9 +14,14 @@ services:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - app-network
-  app:
-    build: .
-    container_name: emergency-notification-system
+  recipient-service:
+    build:
+      dockerfile: recipient-service/Dockerfile
+      context: .
+    container_name: recipient-service
+    env_file:
+      - .env
+      - recipient-service/.env.recipient
     environment:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -24,7 +31,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - database
+      - recipient-database
     networks:
       - app-network
 
